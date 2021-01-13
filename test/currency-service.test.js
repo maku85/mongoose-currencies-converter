@@ -7,7 +7,7 @@ describe('Currency service tests', () => {
   describe('convertCurrency method', () => {
     const today = moment().startOf('day').toDate();
 
-    describe('Scenario - invalid data', () => {
+    describe('Scenario 1 - invalid data', () => {
       it('should throw error for invalid from currency', async () => {
         await convertCurrency({
           from: 'aaa',
@@ -51,8 +51,8 @@ describe('Currency service tests', () => {
       });
     });
 
-    describe('Scenario - old static currency', () => {
-      it('should convert to static currency', async () => {
+    describe('Scenario 2 - old currencies', () => {
+      it('should convert EUR to ITL', async () => {
         const res = await convertCurrency({
           from: 'eur',
           to: 'itl',
@@ -65,7 +65,7 @@ describe('Currency service tests', () => {
         });
       });
 
-      it('should convert from static currency', async () => {
+      it('should convert ITL to EUR', async () => {
         const res = await convertCurrency({
           from: 'itl',
           to: 'eur',
@@ -79,8 +79,8 @@ describe('Currency service tests', () => {
       });
     });
 
-    describe('Scenario - EUR conversion', () => {
-      it('should convert currency to EUR', async () => {
+    describe('Scenario 3 - EUR conversion', () => {
+      it('should convert USD to EUR', async () => {
         const res = await convertCurrency({
           from: 'usd',
           to: 'eur',
@@ -94,7 +94,7 @@ describe('Currency service tests', () => {
         });
       });
 
-      it('should convert currency to EUR with date before EUR introduction', async () => {
+      it('should convert USD to EUR with date before EUR introduction', async () => {
         const res = await convertCurrency({
           from: 'usd',
           to: 'eur',
@@ -109,8 +109,8 @@ describe('Currency service tests', () => {
       });
     });
 
-    describe('Scenario - other currency conversion', () => {
-      it('should convert currency USD to GBP', async () => {
+    describe('Scenario 4 - other currency conversion', () => {
+      it('should convert USD to GBP', async () => {
         const res = await convertCurrency({
           from: 'usd',
           to: 'GbP',
@@ -124,7 +124,7 @@ describe('Currency service tests', () => {
         });
       });
 
-      it('should convert currency GBP to CHF with a specific number of digit', async () => {
+      it('should convert GBP to CHF with a specific number of digit', async () => {
         const res = await convertCurrency({
           from: 'GBP',
           to: 'chf',

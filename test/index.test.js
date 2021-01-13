@@ -24,7 +24,24 @@ describe('Plugin tests', async () => {
     });
   });
 
-  describe('setting a currency field', async () => {
+  describe('Scenario 1 - invalid data', async () => {
+    let ProductSchema;
+    let Product0;
+
+    before((done) => {
+      ProductSchema = new mongoose.Schema({
+        price: { type: Number },
+        currency: { type: String },
+        date: { type: Date },
+      });
+      ProductSchema.plugin(converter);
+      Product0 = mongoose.model('Product0', ProductSchema);
+
+      done();
+    });
+  });
+
+  describe('Scenario 2 - single currency field with default conversion currency', async () => {
     let Product1;
 
     before((done) => {
@@ -68,22 +85,9 @@ describe('Plugin tests', async () => {
       updated.should.have.property('priceConversion');
       should.equal(updated.priceConversion.value, 0.84);
     });
-
-    it.only('should convert using finOneAndUpdate', async () => {
-      const product = new Product1({
-        price: '1',
-        currency: 'USD',
-        date: new Date('2020-12-01'),
-      });
-      await Product1.findOneAndUpdate({ _id: product._id }, { price: '2' });
-
-      const updated = await Product1.findById(product._id);
-      updated.should.have.property('priceConversion');
-      should.equal(updated.priceConversion.value, 0.84);
-    });
   });
 
-  describe('setting a currency field with default currency', async () => {
+  describe('Scenario 3 - multiple fields with default conversion currency', async () => {
     let Product2;
 
     before((done) => {
@@ -147,7 +151,7 @@ describe('Plugin tests', async () => {
     });
   });
 
-  describe('setting a currency field and a default to currency', async () => {
+  describe('Scenario 4 - single field with custom conversion currency', async () => {
     let Product3;
 
     before((done) => {

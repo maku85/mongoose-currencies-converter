@@ -1,5 +1,8 @@
 # Mongoose currencies converter
 
+[![Dependency Status](https://david-dm.org/maku85/mongoose-currencies-converter.svg)](https://david-dm.org/maku85/mongoose-currencies-converter)
+[![devDependency Status](https://david-dm.org/maku85/mongoose-currencies-converter/dev-status.svg)](https://david-dm.org/maku85/mongoose-currencies-converter#info=devDependencies)
+
 Mongoose currencies converter is a mongoose Schema plugin that can automatically convert currency fields.
 
 ## Getting started
@@ -85,7 +88,8 @@ Mongoose Currencies Converter try to auto convert documents in favor of mongoose
 
 ## TODO List
 
-- [ ] Support `Model.findOneAndUpdate` and `Model.insertMany`
+- [ ] Manual conversion
+- [ ] Support `Model.insertMany`
 - [ ] Handle errors
 - [ ] Log
 - [ ] Add more tests
