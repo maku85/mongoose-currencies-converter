@@ -1,0 +1,51 @@
+{
+  "name": "mongoose-currencies-converter",
+  "version": "1.0.0",
+  "description": "Mongoose plugin to convert document currency fields.",
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "eslint lib test",
+    "lint-fix": "npm run lint -- --fix",
+    "test": "mocha --timeout 120000 --exit",
+    "coverage": "nyc --reporter=text mocha --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maku85/mongoose-currencies-converter.git"
+  },
+  "keywords": [
+    "mongoose",
+    "currency",
+    "converter"
+  ],
+  "author": "Mauro Cunsolo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maku85/mongoose-currencies-converter/issues"
+  },
+  "homepage": "https://github.com/maku85/mongoose-currencies-converter#readme",
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "lodash.get": "^4.4.2",
+    "lodash.set": "^4.3.2",
+    "moment": "^2.29.1",
+    "mongoose": "^5.11.11",
+    "node-cache": "^5.1.2",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "mocha": "^8.2.1",
+    "mockgoose": "^8.0.4",
+    "nyc": "^15.1.0",
+    "prettier": "^2.2.1",
+    "should": "^13.2.3"
+  },
+  "peerDependencies": {
+    "mongoose": "~> 5.x"
+  }
+}
