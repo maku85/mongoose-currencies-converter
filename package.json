@@ -7,7 +7,7 @@
     "lint": "eslint lib test",
     "lint-fix": "npm run lint -- --fix",
     "test": "mocha --timeout 120000 --exit",
-    "coverage": "nyc --reporter=text mocha --exit"
+    "coverage": "nyc report --reporter=text-lcov > coverage/lcov.info"
   },
   "repository": {
     "type": "git",
