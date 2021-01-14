@@ -1,5 +1,7 @@
 # Mongoose currencies converter [WIP]
 
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/maku85/mongoose-currencies-converter.svg)
+
 [![Build Status](https://travis-ci.org/maku85/mongoose-currencies-converter.svg?branch=main)](https://travis-ci.org/maku85/mongoose-currencies-converter)
 [![Dependency Status](https://david-dm.org/maku85/mongoose-currencies-converter.svg)](https://david-dm.org/maku85/mongoose-currencies-converter)
 [![devDependency Status](https://david-dm.org/maku85/mongoose-currencies-converter/dev-status.svg)](https://david-dm.org/maku85/mongoose-currencies-converter#info=devDependencies)
