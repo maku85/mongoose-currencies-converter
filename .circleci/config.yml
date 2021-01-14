@@ -26,7 +26,9 @@ jobs:
           command: npm test
       - run:
           name: Run and Collect Coverage Reports
-          command: npm run coverage
+          command: |
+              mkdir coverage
+              npm run coverage
       - store_artifacts:
           path: coverage
 
