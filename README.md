@@ -1,4 +1,4 @@
-# Mongoose currencies converter
+# Mongoose currencies converter [WIP]
 
 [![Build Status](https://travis-ci.org/maku85/mongoose-currencies-converter.svg?branch=main)](https://travis-ci.org/maku85/mongoose-currencies-converter)
 [![Dependency Status](https://david-dm.org/maku85/mongoose-currencies-converter.svg)](https://david-dm.org/maku85/mongoose-currencies-converter)
