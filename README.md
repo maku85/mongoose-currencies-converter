@@ -100,4 +100,4 @@ Mongoose Currencies Converter try to auto convert documents in favor of mongoose
 
 ## Changelog
 
-[View changelog](CHANGELOG.md)
+[View releases](https://github.com/maku85/mongoose-currencies-converter/releases)
