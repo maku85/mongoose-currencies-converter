@@ -1,13 +1,17 @@
 const mongoose = require('mongoose');
 const should = require('should');
+const sinon = require('sinon');
 const { Mockgoose } = require('mockgoose');
 
 const converter = require('../lib');
+const currencyService = require('../lib/currencyService');
 
 const mockgoose = new Mockgoose(mongoose);
 mongoose.Promise = global.Promise;
 
 describe('Plugin tests', async () => {
+  let convertCurrencyStub;
+
   before((done) => {
     mockgoose.helper.setDbVersion('3.6.20');
     mockgoose.prepareStorage().then(() => {
@@ -22,6 +26,14 @@ describe('Plugin tests', async () => {
         done,
       );
     });
+  });
+
+  beforeEach(() => {
+    convertCurrencyStub = sinon.stub(currencyService, 'convertCurrency');
+  });
+
+  afterEach(() => {
+    convertCurrencyStub.restore();
   });
 
   describe('Scenario 1 - invalid data', async () => {
@@ -65,7 +77,17 @@ describe('Plugin tests', async () => {
     });
 
     it('should convert ITL currency to default EUR currency', async () => {
-      const product = new Product1({ price: '1936.27', currency: 'ITL' });
+      const productData = { price: 1936.27, currency: 'ITL' };
+      convertCurrencyStub
+        .withArgs({
+          from: productData.currency,
+          to: 'EUR',
+          amount: productData.price,
+          date: productData.date,
+          digit: 2,
+        })
+        .returns({ value: '1', currency: 'EUR', date: productData.date });
+      const product = new Product1(productData);
       await product.save();
 
       const updated = await Product1.findById(product._id);
@@ -74,11 +96,25 @@ describe('Plugin tests', async () => {
     });
 
     it('should convert USD currency to default EUR currency at the specified date', async () => {
-      const product = new Product1({
-        price: '1',
+      const productData = {
+        price: 1,
         currency: 'USD',
         date: new Date('2020-12-01'),
-      });
+      };
+      convertCurrencyStub
+        .withArgs({
+          from: productData.currency,
+          to: 'EUR',
+          amount: productData.price,
+          date: productData.date,
+          digit: 2,
+        })
+        .returns({
+          value: 0.84,
+          currency: 'EUR',
+          date: productData.date,
+        });
+      const product = new Product1(productData);
       await product.save();
 
       const updated = await Product1.findById(product._id);
@@ -129,18 +165,45 @@ describe('Plugin tests', async () => {
     });
 
     it('should convert currencies to default EUR currency at the specified date', async () => {
-      const product = new Product2({
+      const productData = {
         acquisition: {
-          value: '5',
+          value: 5,
           currency: 'GBP',
           date: new Date('2019-05-06'),
         },
         price: {
-          value: '10',
+          value: 10,
           currency: 'USD',
           date: new Date('2020-12-26'),
         },
-      });
+      };
+      convertCurrencyStub
+        .withArgs({
+          from: productData.acquisition.currency,
+          to: 'EUR',
+          amount: productData.acquisition.value,
+          date: productData.acquisition.date,
+          digit: 2,
+        })
+        .returns({
+          value: 5.85,
+          currency: 'EUR',
+          date: productData.acquisition.date,
+        });
+      convertCurrencyStub
+        .withArgs({
+          from: productData.price.currency,
+          to: 'EUR',
+          amount: productData.price.value,
+          date: productData.price.date,
+          digit: 2,
+        })
+        .returns({
+          value: 8.2,
+          currency: 'EUR',
+          date: productData.price.date,
+        });
+      const product = new Product2(productData);
       await product.save();
 
       const updated = await Product2.findById(product._id);
@@ -182,11 +245,25 @@ describe('Plugin tests', async () => {
     });
 
     it('should convert EUR currency to setted USD currency', async () => {
-      const product = new Product3({
-        price: '25',
+      const productData = {
+        price: 25,
         currency: 'EUR',
         date: new Date('2020-12-12'),
-      });
+      };
+      convertCurrencyStub
+        .withArgs({
+          from: productData.currency,
+          to: 'USD',
+          amount: productData.price,
+          date: productData.date,
+          digit: 2,
+        })
+        .returns({
+          value: 30.32,
+          currency: 'USD',
+          date: productData.date,
+        });
+      const product = new Product3(productData);
       await product.save();
 
       const updated = await Product3.findById(product._id);

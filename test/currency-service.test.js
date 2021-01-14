@@ -1,13 +1,50 @@
 const moment = require('moment');
+const nock = require('nock');
 const should = require('should');
+const url = require('url');
 
 const { convertCurrency } = require('../lib/currencyService');
+const { exchangeApi } = require('../lib/constants');
 
 describe('Currency service tests', () => {
   describe('convertCurrency method', () => {
     const today = moment().startOf('day').toDate();
 
     describe('Scenario 1 - invalid data', () => {
+      it('should throw error for empty currency', async () => {
+        await convertCurrency({
+          from: '',
+          to: 'itl',
+          amount: 1,
+        }).catch((err) =>
+          err.message.should.equal('Invalid value. Currency is required!'),
+        );
+      });
+
+      it('should throw error for invalid currency type', async () => {
+        await convertCurrency({
+          from: 1,
+          to: 'itl',
+          amount: 1,
+        }).catch((err) =>
+          err.message.should.equal(
+            'Invalid value: 1. Currency must be a string!',
+          ),
+        );
+      });
+
+      it('should throw error for invalid currency length', async () => {
+        await convertCurrency({
+          from: '1234',
+          to: 'itl',
+          amount: 1,
+        }).catch((err) =>
+          err.message.should.equal(
+            'Invalid value: 1234. Letter count not equal to 3!',
+          ),
+        );
+      });
+
       it('should throw error for invalid from currency', async () => {
         await convertCurrency({
           from: 'aaa',
@@ -51,7 +88,7 @@ describe('Currency service tests', () => {
       });
     });
 
-    describe('Scenario 2 - old currencies', () => {
+    describe('Scenario 2 - old currencies from/to EUR', () => {
       it('should convert EUR to ITL', async () => {
         const res = await convertCurrency({
           from: 'eur',
@@ -79,7 +116,23 @@ describe('Currency service tests', () => {
       });
     });
 
-    describe('Scenario 3 - EUR conversion', () => {
+    describe('Scenario 3 - other currencies', () => {
+      beforeEach(() => {
+        nock(exchangeApi)
+          .get(/^\/[0-9]{4}-[0-9]{2}-[0-9]{2}$/)
+          .query({ base: /[A-Z]{3}/, symbols: /[A-Z]{3}/ })
+          .reply(200, (uri) => {
+            const parsed = new url.URL(uri, 'http://example.com');
+            return {
+              base: parsed.searchParams.get('base').toUpperCase(),
+              date: parsed.pathname.replace('/', ''),
+              rates: {
+                [parsed.searchParams.get('symbols').toUpperCase()]: 1.123456789,
+              },
+            };
+          });
+      });
+
       it('should convert USD to EUR', async () => {
         const res = await convertCurrency({
           from: 'usd',
@@ -89,8 +142,8 @@ describe('Currency service tests', () => {
         });
         should.deepEqual(res, {
           currency: 'EUR',
-          date: moment('2019-05-03').toDate(),
-          value: 89.65,
+          date: moment('2019-05-05').toDate(),
+          value: 112.35,
         });
       });
 
@@ -104,23 +157,7 @@ describe('Currency service tests', () => {
         should.deepEqual(res, {
           currency: 'EUR',
           date: moment('1999-04-01').toDate(),
-          value: 92.83,
-        });
-      });
-    });
-
-    describe('Scenario 4 - other currency conversion', () => {
-      it('should convert USD to GBP', async () => {
-        const res = await convertCurrency({
-          from: 'usd',
-          to: 'GbP',
-          amount: 100,
-          date: '2019-05-05',
-        });
-        should.deepEqual(res, {
-          currency: 'GBP',
-          date: moment('2019-05-03').toDate(),
-          value: 76.9,
+          value: 112.35,
         });
       });
 
@@ -134,8 +171,8 @@ describe('Currency service tests', () => {
         });
         should.deepEqual(res, {
           currency: 'CHF',
-          date: moment('2019-05-03').toDate(),
-          value: 132.6922,
+          date: moment('2019-05-05').toDate(),
+          value: 112.3457,
         });
       });
     });
