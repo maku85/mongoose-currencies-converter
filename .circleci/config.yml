@@ -22,8 +22,14 @@ jobs:
       # The orb install-packages step will also automatically cache them for faster future runs.
       - node/install-packages
       - run:
-          name: Run tests
-          command: npm test
+        name: Run tests
+        command: npm test
+      - run:
+        name: Run and Collect Coverage Reports
+        command: npm run coverage
+      - store_artifacts:
+          path: coverage
+
 
 workflows:
   # Below is the definition of your workflow.
