@@ -26,12 +26,15 @@ jobs:
           command: npm test
       - run:
           name: Run and Collect Coverage Reports
-          command: |
-              mkdir coverage
-              npm run coverage
+          command: npm run coverage
+        # Save tests results as artifacts
+        - store_artifacts:
+          path: test-results.xml
+          prefix: tests
+        # Save coverage reports as artifacts
       - store_artifacts:
           path: coverage
-
+          prefix: coverage
 
 workflows:
   # Below is the definition of your workflow.
