@@ -1,32 +1,14 @@
+require('./helpers');
+
 const mongoose = require('mongoose');
 const should = require('should');
 const sinon = require('sinon');
-const { Mockgoose } = require('mockgoose');
 
 const converter = require('../lib');
 const currencyService = require('../lib/currencyService');
 
-const mockgoose = new Mockgoose(mongoose);
-mongoose.Promise = global.Promise;
-
-describe.skip('Plugin tests', async () => {
+describe('Plugin tests', async () => {
   let convertCurrencyStub;
-
-  before((done) => {
-    mockgoose.helper.setDbVersion('3.6.20');
-    mockgoose.prepareStorage().then(() => {
-      mongoose.connect(
-        'mongodb://localhost/mydb',
-        {
-          useFindAndModify: false,
-          useUnifiedTopology: true,
-          useNewUrlParser: true,
-        },
-        done,
-        done,
-      );
-    });
-  });
 
   beforeEach(() => {
     convertCurrencyStub = sinon.stub(currencyService, 'convertCurrency');
@@ -46,10 +28,65 @@ describe.skip('Plugin tests', async () => {
         currency: { type: String },
         date: { type: Date },
       });
-      ProductSchema.plugin(converter);
       Product0 = mongoose.model('Product0', ProductSchema);
 
       done();
+    });
+
+    it('throws error for empty fields', async () => {
+      try {
+        ProductSchema.plugin(converter);
+      } catch (err) {
+        err.message.should.equal('option fields must be set');
+      }
+    });
+
+    it('throws error for empty field name', async () => {
+      try {
+        ProductSchema.plugin(converter, { fields: [{ name: null }] });
+      } catch (err) {
+        err.message.should.equal('field name is required');
+      }
+    });
+
+    it('throws error for field not defined in schema', async () => {
+      try {
+        ProductSchema.plugin(converter, { fields: [{ name: 'value' }] });
+      } catch (err) {
+        err.message.should.equal('field not exists in schema');
+      }
+    });
+
+    it('throws error for invalid field name', async () => {
+      try {
+        ProductSchema.plugin(converter, { fields: [{ name: 123 }] });
+      } catch (err) {
+        err.message.should.equal(
+          'field name must be a string, received number',
+        );
+      }
+    });
+
+    it('throws error for invalid currency field name', async () => {
+      try {
+        ProductSchema.plugin(converter, {
+          fields: [{ name: 'price', currency: 123 }],
+        });
+      } catch (err) {
+        err.message.should.equal(
+          'field currency name must be a string, received number',
+        );
+      }
+    });
+
+    it('throws error for currency field not defined in schema', async () => {
+      try {
+        ProductSchema.plugin(converter, {
+          fields: [{ name: 'price', currency: 'curency' }],
+        });
+      } catch (err) {
+        err.message.should.equal('currency field not exists in schema');
+      }
     });
   });
 
@@ -68,12 +105,6 @@ describe.skip('Plugin tests', async () => {
       Product1 = mongoose.model('Product1', ProductSchema);
 
       done();
-    });
-
-    after((done) => {
-      mockgoose.helper.reset().then(() => {
-        done();
-      });
     });
 
     it('should convert ITL currency to default EUR currency', async () => {
@@ -158,12 +189,6 @@ describe.skip('Plugin tests', async () => {
       done();
     });
 
-    after((done) => {
-      mockgoose.helper.reset().then(() => {
-        done();
-      });
-    });
-
     it('should convert currencies to default EUR currency at the specified date', async () => {
       const productData = {
         acquisition: {
@@ -238,12 +263,6 @@ describe.skip('Plugin tests', async () => {
       done();
     });
 
-    after((done) => {
-      mockgoose.helper.reset().then(() => {
-        done();
-      });
-    });
-
     it('should convert EUR currency to setted USD currency', async () => {
       const productData = {
         price: 25,
@@ -269,6 +288,44 @@ describe.skip('Plugin tests', async () => {
       const updated = await Product3.findById(product._id);
       updated.should.have.property('priceConversion');
       should.equal(updated.priceConversion.value, 30.32);
+    });
+  });
+
+  describe('Scenario 5 - automatic conversion disabled', async () => {
+    let Product4;
+
+    before((done) => {
+      const ProductSchema = new mongoose.Schema({
+        price: { type: Number },
+        currency: { type: String },
+        date: { type: Date },
+      });
+      ProductSchema.plugin(converter, {
+        fields: [
+          {
+            name: 'price',
+            currency: 'currency',
+            date: 'date',
+          },
+        ],
+        convertAutomatically: false,
+      });
+      Product4 = mongoose.model('Product4', ProductSchema);
+
+      done();
+    });
+
+    it('should not convert', async () => {
+      const productData = {
+        price: 25,
+        currency: 'USD',
+        date: new Date('2020-12-12'),
+      };
+      const product = new Product4(productData);
+      await product.save();
+
+      const updated = await Product4.findById(product._id);
+      should.equal(updated.priceConversion, null);
     });
   });
 });
