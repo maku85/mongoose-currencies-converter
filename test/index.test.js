@@ -282,10 +282,16 @@ describe('Plugin tests', async () => {
           currency: 'USD',
           date: productData.date,
         });
-      const product = new Product3(productData);
+      let product = new Product3(productData);
       await product.save();
 
-      const updated = await Product3.findById(product._id);
+      let updated = await Product3.findById(product._id);
+      updated.should.have.property('priceConversion');
+      should.equal(updated.priceConversion.value, 30.32);
+
+      await product.convert();
+
+      updated = await Product3.findById(product._id);
       updated.should.have.property('priceConversion');
       should.equal(updated.priceConversion.value, 30.32);
     });
@@ -326,6 +332,141 @@ describe('Plugin tests', async () => {
 
       const updated = await Product4.findById(product._id);
       should.equal(updated.priceConversion, null);
+    });
+  });
+
+  describe('Scenario 6 - manual conversion', async () => {
+    let Product5;
+
+    before((done) => {
+      const ProductSchema = new mongoose.Schema({
+        acquisition: {
+          value: Number,
+          currency: String,
+          date: Date,
+        },
+        price: {
+          value: Number,
+          currency: String,
+          date: Date,
+        },
+      });
+      ProductSchema.plugin(converter, {
+        fields: [
+          {
+            name: 'acquisition.value',
+            currency: 'acquisition.currency',
+            date: 'acquisition.date',
+          },
+          {
+            name: 'price.value',
+            currency: 'price.currency',
+            date: 'price.date',
+          },
+        ],
+        convertAutomatically: false,
+      });
+      Product5 = mongoose.model('Product5', ProductSchema);
+
+      done();
+    });
+
+    it('should convert manually', async () => {
+      const productData = {
+        acquisition: {
+          value: 5,
+          currency: 'GBP',
+          date: new Date('2019-05-06'),
+        },
+        price: {
+          value: 25,
+          currency: 'USD',
+          date: new Date('2020-12-12'),
+        },
+      };
+      convertCurrencyStub
+        .withArgs({
+          from: productData.acquisition.currency,
+          to: 'EUR',
+          amount: productData.acquisition.value,
+          date: productData.acquisition.date,
+          digit: 2,
+        })
+        .returns({
+          value: 30.32,
+          currency: 'EUR',
+          date: productData.date,
+        });
+      convertCurrencyStub
+        .withArgs({
+          from: productData.price.currency,
+          to: 'EUR',
+          amount: productData.price.value,
+          date: productData.price.date,
+          digit: 2,
+        })
+        .returns({
+          value: 30.32,
+          currency: 'EUR',
+          date: productData.price.date,
+        });
+      convertCurrencyStub
+        .withArgs({
+          from: productData.price.currency,
+          to: 'EUR',
+          amount: productData.price.value * 2,
+          date: productData.price.date,
+          digit: 2,
+        })
+        .returns({
+          value: 30.32 * 2,
+          currency: 'EUR',
+          date: productData.price.date,
+        });
+      const product = new Product5(productData);
+      await product.save();
+
+      let updated = await Product5.findById(product._id);
+      should.equal(updated.acquisition.valueConversion, null);
+      should.equal(updated.price.valueConversion, null);
+
+      product.price.value = productData.price.value * 2;
+      await product.convert({ fields: ['price.value'] });
+
+      updated = await Product5.findById(product._id);
+      should.equal(updated.acquisition.valueConversion, null);
+      updated.price.should.have.property('valueConversion');
+      should.equal(updated.price.valueConversion.value, 30.32 * 2);
+    });
+
+    it('should convert manually with callback', (done) => {
+      const productData = {
+        price: 25,
+        currency: 'USD',
+        date: new Date('2020-12-12'),
+      };
+      convertCurrencyStub
+        .withArgs({
+          from: productData.currency,
+          to: 'EUR',
+          amount: productData.price,
+          date: productData.date,
+          digit: 2,
+        })
+        .returns({
+          value: 30.32,
+          currency: 'EUR',
+          date: productData.date,
+        });
+      const product = new Product5(productData);
+      product.save().then(() => {
+        product.convert({}, async (res) => {
+          const updated = await Product5.findById(res._id);
+          updated.should.have.property('priceConversion');
+          should.equal(updated.priceConversion.value, 30.32);
+        });
+        done();
+      });
     });
   });
 });

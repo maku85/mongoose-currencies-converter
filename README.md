@@ -91,7 +91,7 @@ Mongoose Currencies Converter try to auto convert documents in favor of mongoose
 
 ## TODO List
 
-- [ ] Manual conversion
+- [x] Manual conversion
 - [ ] Support `Model.insertMany`
 - [ ] Handle errors
 - [ ] Log
