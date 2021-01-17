@@ -8,7 +8,8 @@
     "lint-fix": "npm run lint -- --fix",
     "test": "mocha test --exit",
     "test:ci": "mocha test --reporter mocha-junit-reporter --exit",
-    "coverage": "nyc --reporter=lcov --reporter=text mocha --exit"
+    "coverage": "nyc --reporter=lcov --reporter=text mocha --exit",
+    "coverage:ci": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
