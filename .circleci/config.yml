@@ -38,6 +38,7 @@ jobs:
           name: Run and collect coverage reports
           command: |
             mkdir .nyc_output
+            npm run coverage
             npm run coverage:ci
       - coveralls/upload
       # Save tests results as artifacts
