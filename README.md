@@ -2,6 +2,7 @@
 
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/maku85/mongoose-currencies-converter.svg)
 [![CircleCI](https://circleci.com/gh/maku85/mongoose-currencies-converter.svg?style=shield)](https://circleci.com/gh/maku85/mongoose-currencies-converter)
+[![Coverage Status](https://coveralls.io/repos/github/maku85/mongoose-currencies-converter/badge.svg?branch=main)](https://coveralls.io/github/maku85/mongoose-currencies-converter?branch=main)
 
 Mongoose currencies converter is a mongoose Schema plugin that can automatically convert currency fields.
 
