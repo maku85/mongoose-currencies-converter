@@ -28,8 +28,8 @@ jobs:
           name: Run tests
           command: |
             npm i mongoose
-            npm i mocha mocha-junit-reporter
-            mocha test --reporter mocha-junit-reporter
+            npm i mocha-junit-reporter
+            mocha --reporter mocha-junit-reporter
           environment:
             MOCHA_FILE: ~/junit/test-results.xml
       - run:
