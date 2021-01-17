@@ -37,12 +37,11 @@ jobs:
           command: npm run coverage
       - coveralls/upload
       # Save tests results as artifacts
-      - store_test_results
+      - store_test_results:
           path: ~/junit
       # Save coverage reports as artifacts
       - store_artifacts:
           path: coverage
-          prefix: coverage
 
 workflows:
   # Below is the definition of your workflow.
