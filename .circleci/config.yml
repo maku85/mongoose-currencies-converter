@@ -6,6 +6,8 @@ orbs:
   # The Node.js orb contains a set of prepackaged CircleCI configuration you can utilize
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
   node: circleci/node@4.1
+  # Coveralls orb
+  coveralls: coveralls/coveralls@1.0.6
 
 jobs:
   # Below is the definition of your job to build and test your app.
@@ -30,6 +32,7 @@ jobs:
       - run:
           name: Run and Collect Coverage Reports
           command: npm run coverage
+      - coveralls/upload
       # Save tests results as artifacts
       - store_artifacts:
           path: test-results.xml
