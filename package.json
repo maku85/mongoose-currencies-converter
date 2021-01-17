@@ -9,7 +9,7 @@
     "test": "mocha test --exit",
     "test:ci": "mocha test --reporter mocha-junit-reporter --exit",
     "coverage": "nyc --reporter=lcov --reporter=text mocha --exit",
-    "coverage:ci": "nyc report --reporter=text-lcov | coveralls"
+    "coverage:ci": "nyc report --reporter=text-lcov"
   },
   "repository": {
     "type": "git",
