@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint lib test",
     "lint-fix": "npm run lint -- --fix",
-    "test": "mocha --timeout 120000 --exit",
+    "test": "mocha test --exit",
+    "test:ci": "mocha test --reporter mocha-junit-reporter --exit",
     "coverage": "nyc --reporter=lcov --reporter=text mocha --exit"
   },
   "repository": {

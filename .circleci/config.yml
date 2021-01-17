@@ -31,7 +31,7 @@ jobs:
             npm i mongoose # peer dependecy
             npm i mocha-junit-reporter # just for CircleCI
             mkdir ~/junit
-            mocha test --reporter mocha-junit-reporter
+            npm run test:ci
           environment:
             MOCHA_FILE: ~/junit/test-results.xml
       - run:
