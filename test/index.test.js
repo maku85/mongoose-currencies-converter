@@ -152,6 +152,32 @@ describe('Plugin tests', async () => {
       updated.should.have.property('priceConversion');
       should.equal(updated.priceConversion.value, 0.84);
     });
+
+    it('should convert USD currency to default EUR with insertMany', async () => {
+      const productData = {
+        price: 1,
+        currency: 'USD',
+        date: new Date('2020-12-01'),
+      };
+      convertCurrencyStub
+        .withArgs({
+          from: productData.currency,
+          to: 'EUR',
+          amount: productData.price,
+          date: productData.date,
+          digit: 2,
+        })
+        .returns({
+          value: 0.84,
+          currency: 'EUR',
+          date: productData.date,
+        });
+      const products = await Product1.insertMany([productData]);
+
+      const updated = await Product1.findById(products[0]._id);
+      updated.should.have.property('priceConversion');
+      should.equal(updated.priceConversion.value, 0.84);
+    });
   });
 
   describe('Scenario 3 - multiple fields with default conversion currency', async () => {

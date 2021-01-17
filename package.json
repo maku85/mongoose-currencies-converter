@@ -1,6 +1,6 @@
 {
   "name": "mongoose-currencies-converter",
-  "version": "1.0.0",
+  "version": "0.2.0-alpha",
   "description": "Mongoose plugin to convert document currency fields.",
   "main": "lib/index.js",
   "scripts": {
