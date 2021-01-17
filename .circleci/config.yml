@@ -29,7 +29,7 @@ jobs:
           command: |
             npm i
             npm i mongoose # peer dependecy
-            npm i mocha-junit-reporter # just for CircleCI
+            npm i coveralls mocha-junit-reporter # just for CircleCI
             mkdir ~/junit
             npm run test:ci
           environment:
