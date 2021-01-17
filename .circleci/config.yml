@@ -28,15 +28,17 @@ jobs:
           name: Run tests
           command: |
             npm i mongoose
-            npm test
+            npm i mocha-junit-reporter
+            mocha test --reporter mocha-junit-reporter
+          environment:
+            MOCHA_FILE: ~/junit/test-results.xml
       - run:
           name: Run and Collect Coverage Reports
           command: npm run coverage
       - coveralls/upload
       # Save tests results as artifacts
-      - store_artifacts:
-          path: test-results.xml
-          prefix: tests
+      - store_test_results
+          path: ~/junit
       # Save coverage reports as artifacts
       - store_artifacts:
           path: coverage
