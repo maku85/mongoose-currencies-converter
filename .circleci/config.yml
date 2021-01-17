@@ -36,7 +36,9 @@ jobs:
             MOCHA_FILE: ~/junit/test-results.xml
       - run:
           name: Run and collect coverage reports
-          command: npm run coverage:ci
+          command: |
+            mkdir .nyc_output
+            npm run coverage:ci
       - coveralls/upload
       # Save tests results as artifacts
       - store_artifacts:
