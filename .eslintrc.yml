@@ -9,10 +9,10 @@ plugins:
   - prettier
 parserOptions:
   ecmaVersion: 12
-rules:
-  - no-underscore-dangle: 0
+rules: { 'import/no-unresolved': 0, no-underscore-dangle: 0 }
 overrides:
   - env:
       mocha: true
     files:
+      - 'test/helpers.js'
       - '**/*.test.js'

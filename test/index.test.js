@@ -20,7 +20,6 @@ describe('Plugin tests', async () => {
 
   describe('Scenario 1 - invalid data', async () => {
     let ProductSchema;
-    let Product0;
 
     before((done) => {
       ProductSchema = new mongoose.Schema({
@@ -28,7 +27,7 @@ describe('Plugin tests', async () => {
         currency: { type: String },
         date: { type: Date },
       });
-      Product0 = mongoose.model('Product0', ProductSchema);
+      mongoose.model('Product0', ProductSchema);
 
       done();
     });
@@ -308,7 +307,7 @@ describe('Plugin tests', async () => {
           currency: 'USD',
           date: productData.date,
         });
-      let product = new Product3(productData);
+      const product = new Product3(productData);
       await product.save();
 
       let updated = await Product3.findById(product._id);

@@ -31,7 +31,6 @@
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "moment": "^2.29.1",
-    "mongoose": "^5.11.11",
     "node-cache": "^5.1.2",
     "node-fetch": "^2.6.1"
   },
@@ -42,7 +41,6 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.3.1",
     "mocha": "^8.2.1",
-    "mockgoose": "^8.0.4",
     "nock": "^13.0.5",
     "nyc": "^15.1.0",
     "prettier": "^2.2.1",
