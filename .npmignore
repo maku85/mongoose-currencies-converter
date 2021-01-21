@@ -1,0 +1,10 @@
+.circleci/
+.github/
+.nyc_output/
+coverage/
+example/
+test/
+.coveralls.yml
+.eslintrc.yml
+.prettierignore
+.prettierrc.json
