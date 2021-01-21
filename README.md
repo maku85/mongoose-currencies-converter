@@ -26,9 +26,12 @@ const currenciesConverter = require('mongoose-currencies-converter');
 const Schema = mongoose.Schema;
 
 const schema = new Schema({
-  message: String,
+  price: Number,
 });
-schema.plugin(currenciesConverter);
+schema.plugin(currenciesConverter, {
+  fields: [{ name: 'price' }],
+  defaultToCurrency: 'USD',
+});
 ```
 
 ## API
@@ -88,17 +91,20 @@ Mongoose is defined as a peer dependency so you need to install it separately.
 
 #### Auto conversion
 
-Mongoose Currencies Converter try to auto convert documents in favor of mongoose's [middleware](http://mongoosejs.com/docs/middleware.html) feature so conversion is fired only using `document.save` but not when using `Model.update` (as a workaround this you can do a `find`, modify field for `this` and then call `this.save()` or call `this.update({}, { $set: { isModified: true } })`).
+Mongoose Currencies Converter try to auto convert documents in favor of mongoose's [middleware](http://mongoosejs.com/docs/middleware.html) feature so conversion is fired only using `document.save`/`Model.insertMany` but not when using `Model.update` (as a workaround this you can do a `find`, modify field for `this` and then call `this.save()` or call `this.update({}, { $set: { isModified: true } })`).
 
 ## TODO List
 
 - [x] Manual conversion
 - [x] Support `Model.insertMany`
 - [x] Handle errors
+- [x] Write example
 - [ ] Add more tests
-- [ ] Improve documentation
-- [ ] Write example
 - [ ] Port to typescript
+
+## Example
+
+[View folder](https://github.com/maku85/mongoose-currencies-converter/tree/main/example)
 
 ## Changelog
 

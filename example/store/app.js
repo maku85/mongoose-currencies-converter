@@ -18,12 +18,17 @@ mongoose.connect('mongodb://localhost/my-store', (err) => {
 
 const ProductSchema = new Schema({
   name: { type: String, required: true },
+  acquisition: Number,
+  acquisitionCurrency: String,
   price: Number,
-  currency: String,
 });
 
 ProductSchema.plugin(mongooseCurrenciesConverter, {
-  fields: [{ name: 'price', currency: 'currency' }],
+  fields: [
+    { name: 'price' },
+    { name: 'acquisition', currency: 'acquisitionCurrency' },
+  ],
+  defaultToCurrency: 'USD',
 });
 
 const Product = mongoose.model('Product', ProductSchema);
@@ -75,8 +80,9 @@ router.post('/', (req, res) => {
   }
   const product = new Product({
     name: req.body.name,
+    acquisition: req.body.acquisition,
+    acquisitionCurrency: req.body.acquisitionCurrency,
     price: req.body.price,
-    currency: req.body.currency,
   });
   return product
     .save()
@@ -94,8 +100,11 @@ router.put('/:id', (req, res) =>
   Product.findById(req.params.id)
     .then((product) => {
       if (req.body.name) product.name = req.body.name;
+      if (req.body.acquisition) product.price = req.body.acquisition;
+      if (req.body.acquisitionCurrency) {
+        product.currency = req.body.acquisitionCurrency;
+      }
       if (req.body.price) product.price = req.body.price;
-      if (req.body.currency) product.currency = req.body.currency;
       product
         .save()
         .then((updatedProduct) => res.status(200).send(updatedProduct))
